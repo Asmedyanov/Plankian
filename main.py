@@ -35,6 +35,7 @@ def wafe_freq(wave_length):
 
 wave_length_nm = np.arange(100.0, 1000.0, 0.5)
 wave_length_nm_filters = np.array([488.0, 533.0, 632.8])
+#wave_length_nm_filters = np.array([380.0, 533.0, 740.0])
 wave_length = wave_length_nm * 1.0e-9
 wave_length_filters = wave_length_nm_filters * 1.0e-9
 # plasma_T_eV = np.arange(1.0, 3.5, 0.5)
@@ -63,12 +64,13 @@ for i, T in enumerate(plasma_T):
     y = spectrum_power_nu(wafe_freq(wave_length), T)
     y_filter = spectrum_power_nu(wafe_freq(wave_length_filters), T)
 
-    poly = np.polyfit(x_filter * 1.0e-9, y_filter, 1)
+    poly = np.polyfit(x_filter, y_filter, 1)
     poly_f = np.poly1d(poly)
-    poly_f_plot = poly_f(x * 1.0e-9)
-    f_lambda = lambda t: R0(t) - poly[-1]
+    poly_f_plot = poly_f(x)
+    poly_m = np.polyfit(x_filter*1.0e-9, y_filter, 1)
+    f_lambda = lambda t: R0(t) - poly_m[-1]
     Troot = fsolve(f_lambda,[1000,4000])
-    print(Troot)
+    print(f'{Troot}; T={T}')
 
     # y=y/np.max(y)
     plt.plot(x, y, label=f'T = {T} K')
